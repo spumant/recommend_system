@@ -1,5 +1,12 @@
-from APP01.models import Collection, Like, Log, Question, Special, Users, Week, Wrong
+from APP01.models import Collection, Like, Log, Question, Special, Users, Week, Wrong, Item
 from rest_framework import serializers
+from rest_framework_mongoengine import serializers as s1
+
+
+class Item_serializer(s1.DocumentSerializer):
+    class Meta:
+        model = Item
+        fields = '__all__'
 
 
 class Collection_serializer(serializers.ModelSerializer):

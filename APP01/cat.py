@@ -5,65 +5,141 @@ from sklearn import preprocessing
 from sklearn.metrics import roc_auc_score
 from sklearn.model_selection import StratifiedKFold
 from sklearn.model_selection import train_test_split
-# 数据读取
-train_df = pd.read_csv("./data/train.csv")
-test_df = pd.read_csv("./data/test.csv")
 
-# 特征处理
-train_df.fillna("-1", inplace=True)
-test_df.fillna("-1", inplace=True)
+clf = None
 
-for feature in train_df.columns:
-    if train_df[feature].dtype == "object":
-        le = preprocessing.LabelEncoder()
-        le.fit(list(train_df[feature]) + list(test_df[feature]))
-        train_df[feature] = le.transform(train_df[feature])
-        test_df[feature] = le.transform(test_df[feature])
 
-cols = ['pkgname', 'ver', 'slotid', 'mediaid', 'material']
+def cat_prepare():
+    global clf
+    train_df = pd.read_csv(
+        "APP01/data/log.csv",
+        low_memory=True,
+        usecols=['user', 'itemid', 'tagid', 'time', 'love', 'col'],
+        names=['user', 'itemid', 'tagid', 'time', 'love', 'col'],
+        nrows=None,
+        dtype={
+            'user': "category",
+            'itemid': "category",
+            'tagid': "category",
+            'time': "category",
+            'love': "category",
+            'col': "category",
+        },
+    )
+    train_data = np.loadtxt(
+        "APP01/data/log.csv",
+        dtype=np.float32,
+        delimiter=",",
+        usecols=list(range(0, 6)),
+        skiprows=1,
+    )
 
-X_train = train_df.drop(['label'], axis=1)
-Y_train = train_df['label']
-test_data = test_df.copy()
+    train_df.to_parquet('APP01/temp_data/train_df.parquet')
+    np.save('APP01/temp_data/train_data.npy', train_data)
 
-model = CatBoostClassifier(loss_function="Logloss",
-                           eval_metric="AUC",
-                           task_type="CPU",
-                           learning_rate=0.05,
-                           iterations=500,
-                           random_seed=2022,
-                           od_type="Iter",
-                           depth=10)
+    train_df = pd.read_parquet("APP01/temp_data/train_df.parquet")
 
-answers = []
-mean_score = 0
-n_folds = 5
-skf = StratifiedKFold(n_splits=n_folds, shuffle=True, random_state=2022)
+    train_data = np.load("APP01/temp_data/train_data.npy")
 
-# 训练模型，使用交叉验证评估结果
-for fold, (train_idx, val_idx) in enumerate(skf.split(X_train, Y_train)):
-    print(f"====== Fold {fold + 1} of {n_folds} ======")
-    x_train, x_val = X_train.iloc[train_idx, :], X_train.iloc[val_idx, :]
-    y_train, y_val = Y_train.iloc[train_idx], Y_train.iloc[val_idx]
-    clf = model.fit(x_train, y_train,
-                    eval_set=(x_val, y_val),
-                    verbose=500,
-                    cat_features=cols)
+    train_data = pd.DataFrame(data=train_data)
 
-    # 在验证集计算AUC
-    predictions = clf.predict_proba(x_val)[:, 1]
-    auc = roc_auc_score(y_val, predictions)
-    mean_score += auc / n_folds
-    print(f"Fold {fold + 1} AUC: {auc:.6f}\n")
+    for col in ['user', 'itemid', 'tagid', 'time', 'love']:
+        train_df[col] = train_df[col].str.replace("b'", "").str.replace("'", "")
 
-print(f"\nMean AUC: {mean_score:.6f}")
+    del train_df['col'][0]
 
-# 使用全量数据训练一个模型
-model.fit(X_train, Y_train, cat_features=cols)
+    train_df['col'] = train_df['col'].astype('str').astype('int')
 
-# 预测测试集结果并输出提交文件
-predictions = clf.predict_proba(test_data)[:, 1]
+    print(train_df)
 
-submission = pd.read_csv('./dataset/提交示例.csv')
-submission['predict'] = predictions
-submission.to_csv('./results/catboost_predictions.csv', index=None)
+    train = pd.merge(train_df, train_data, left_index=True, right_index=True)
+
+    print("train:\n")
+    print(train)
+
+    X_train = train[train['col'].notnull()].drop(['col'], axis=1)
+    Y_train = train[train['col'].notnull()]['col']
+
+    cols = ['user', 'itemid', 'tagid', 'time', 'love']
+    model = CatBoostClassifier(
+        loss_function="Logloss",
+        eval_metric="AUC",
+        task_type="CPU",
+        learning_rate=0.05,
+        iterations=500,
+        random_seed=2022,
+        od_type="Iter",
+        depth=10)
+
+    answers = []
+    mean_score = 0
+    mean_f1 = 0
+    # --------------------------------
+    n_folds = 2  # 后期需要换成5折交叉验证
+    # --------------------------------
+    sk = StratifiedKFold(n_splits=n_folds, shuffle=True, random_state=2022)
+
+    for fold_, (train, test) in enumerate(sk.split(X_train, Y_train)):
+        print("fold n°{}".format(fold_))
+        print('trn_idx:', train)
+        print('val_idx:', test)
+        x_train = X_train.iloc[train]
+        y_train = Y_train.iloc[train]
+        x_test = X_train.iloc[test]
+        y_test = Y_train.iloc[test]
+
+        clf = model.fit(x_train, y_train, eval_set=(x_test, y_test), verbose=500, cat_features=cols)
+        # yy_pred_valid=clf.predict(x_test)            #输出直接为标签
+        yy_pred_valid = clf.predict_proba(x_test)[:, 1]  # 输出预测为1的概率
+        # 验证集的AUC
+        print('cat验证的auc:{}'.format(roc_auc_score(y_test, yy_pred_valid)))
+        mean_score += roc_auc_score(y_test, yy_pred_valid) / n_folds
+
+    print('mean_score:{}'.format(mean_score))
+
+    print('over!')
+
+
+def boost():
+    test_df = pd.read_csv(
+        "APP01/data/test.csv",
+        low_memory=True,
+        usecols=['user', 'itemid', 'tagid', 'time', 'love'],
+        names=['user', 'itemid', 'tagid', 'time', 'love'],
+        nrows=None,
+        dtype={
+            'user': "category",
+            'itemid': "category",
+            'tagid': "category",
+            'time': "category",
+            'love': "category",
+        },
+    )
+
+    test_data = np.loadtxt(
+        "APP01/data/test.csv",
+        dtype=np.float32,
+        delimiter=",",
+        usecols=list(range(0, 6)),
+        skiprows=1,
+    )
+
+    test_df.to_parquet('APP01/temp_data/test_df.parquet')
+
+    np.save('APP01/temp_data/test_data.npy', test_data)
+
+    test_df = pd.read_parquet("APP01/temp_data/test_df.parquet")
+
+    test_data = np.load("APP01/temp_data/test_data.npy")
+
+    test_data = pd.DataFrame(data=test_data)
+
+    for col in ['user', 'itemid', 'tagid', 'time', 'love']:
+        test_df[col] = test_df[col].str.replace("b'", "").str.replace("'", "")
+
+    test = pd.merge(test_df, test_data, left_index=True, right_index=True)
+
+    test_data = test
+    # print("test:\n")
+    # print(test)
+    return clf.predict(test_data)

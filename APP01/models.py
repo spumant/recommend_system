@@ -1,4 +1,19 @@
 from django.db import models
+import mongoengine
+from recommend_system.settings import DATABASES
+
+mongoengine.connect(DATABASES['mongodb']['NAME'])
+
+
+class Item(mongoengine.Document):
+    id = mongoengine.StringField()
+    title = mongoengine.StringField()
+    txt = mongoengine.StringField()
+    img = mongoengine.StringField()
+    tag = mongoengine.StringField()
+    like = mongoengine.IntField()
+    collection = mongoengine.IntField()
+    meta = {'collection': 'item', 'strict': False}
 
 
 class Collection(models.Model):
@@ -20,9 +35,13 @@ class Like(models.Model):
 
 
 class Log(models.Model):
-    user = models.IntegerField()
     id = models.IntegerField(primary_key=True)
+    user = models.IntegerField()
+    itemid = models.IntegerField()
+    tagid = models.IntegerField()
     time = models.IntegerField()
+    love = models.IntegerField()
+    col = models.IntegerField()
 
     class Meta:
         managed = False
@@ -97,4 +116,3 @@ class Wrong(models.Model):
     class Meta:
         managed = False
         db_table = 'wrong'
-

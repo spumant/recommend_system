@@ -40,7 +40,9 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "rest_framework",
-    "APP01.apps.App01Config"
+    "APP01.apps.App01Config",
+    "rest_framework_mongoengine",
+    "django_apscheduler",
 ]
 
 MIDDLEWARE = [
@@ -85,6 +87,9 @@ DATABASES = {
         'PORT': '3306',  # 端口号3306
         'USER': 'root',  # 用什么用户连接
         'PASSWORD': 'monarch99'  # 数据库密码
+    },
+    'mongodb': {
+        'NAME': 'article'
     }
 }
 
