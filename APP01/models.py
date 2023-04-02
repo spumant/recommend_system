@@ -37,9 +37,9 @@ class Collection(models.Model):
         db_table = 'collection'
 
 
-class Like(models.Model):
+class Love(models.Model):
     id = models.OneToOneField('Users', models.DO_NOTHING, db_column='id', primary_key=True)
-    like = models.CharField(max_length=99)
+    love = models.CharField(max_length=99)
     category = models.IntegerField()
 
     class Meta:

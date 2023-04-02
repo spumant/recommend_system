@@ -1,4 +1,4 @@
-from APP01.models import Collection, Like, Log, Question, Special, Users, Week, Wrong, Item, Tag, Video
+from APP01.models import Collection, Love, Log, Question, Special, Users, Week, Wrong, Item, Tag, Video
 from rest_framework import serializers
 from rest_framework_mongoengine import serializers as s1
 
@@ -19,9 +19,9 @@ class Collection_serializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class Like_serializer(serializers.ModelSerializer):
+class Love_serializer(serializers.ModelSerializer):
     class Meta:
-        model = Like
+        model = Love
         fields = '__all__'
 
 

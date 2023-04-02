@@ -1,5 +1,5 @@
-from APP01.models import Video, Collection, Like, Tag
-from APP01.serializers import Video_serializer, Collection_serializer, Like_serializer, Tag_serializer
+from APP01.models import Video, Collection, Love, Tag
+from APP01.serializers import Video_serializer, Collection_serializer, Love_serializer, Tag_serializer
 import csv
 from random import sample
 
@@ -19,12 +19,12 @@ def recom2(pk):
         coll_id_list.append(collection['collection'])
 
     # 查询此用户喜欢的视频
-    like_list = Like.objects.filter(id=pk, category=2)
-    likeserializer = Like_serializer(instance=like_list, many=True)
+    like_list = Love.objects.filter(id=pk, category=2)
+    likeserializer = Love_serializer(instance=like_list, many=True)
     likes = likeserializer.data
     like_id_list = []  # 将用户喜欢的视频id放进列表
     for like in likes:
-        like_id_list.append(like['like'])
+        like_id_list.append(like['love'])
     # 从items中随机抽取100个
     items = sample(items, 100)
 
