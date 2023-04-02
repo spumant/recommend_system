@@ -19,5 +19,7 @@ from APP01 import views
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("recom/<int:pk>", views.recommend.as_view())
+    path("recom/", views.recom_prepare.as_view()),
+    path("recom1/<int:pk>", views.recommend1.as_view()),
+    path("recom2/<int:pk>", views.recommend2.as_view())
 ]

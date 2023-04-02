@@ -16,9 +16,21 @@ class Item(mongoengine.Document):
     meta = {'collection': 'item', 'strict': False}
 
 
+class Video(mongoengine.Document):
+    id = mongoengine.StringField()
+    title = mongoengine.StringField()
+    txt = mongoengine.StringField()
+    img = mongoengine.StringField()
+    tag = mongoengine.StringField()
+    like = mongoengine.IntField()
+    collection = mongoengine.IntField()
+    meta = {'collection': 'item', 'strict': False}
+
+
 class Collection(models.Model):
     id = models.OneToOneField('Users', models.DO_NOTHING, db_column='id', primary_key=True)
     collection = models.CharField(max_length=99)
+    category = models.IntegerField()
 
     class Meta:
         managed = False
@@ -28,6 +40,7 @@ class Collection(models.Model):
 class Like(models.Model):
     id = models.OneToOneField('Users', models.DO_NOTHING, db_column='id', primary_key=True)
     like = models.CharField(max_length=99)
+    category = models.IntegerField()
 
     class Meta:
         managed = False
@@ -116,3 +129,12 @@ class Wrong(models.Model):
     class Meta:
         managed = False
         db_table = 'wrong'
+
+
+class Tag(models.Model):
+    id = models.IntegerField(primary_key=True)
+    tag = models.CharField(max_length=255)
+
+    class Meta:
+        managed = False
+        db_table = 'tag'

@@ -100,7 +100,7 @@ def cat_prepare():
     print('over!')
 
 
-def boost():
+def boost1():
     test_df = pd.read_csv(
         "APP01/data/test.csv",
         low_memory=True,
@@ -131,6 +131,51 @@ def boost():
     test_df = pd.read_parquet("APP01/temp_data/test_df.parquet")
 
     test_data = np.load("APP01/temp_data/test_data.npy")
+
+    test_data = pd.DataFrame(data=test_data)
+
+    for col in ['user', 'itemid', 'tagid', 'time', 'love']:
+        test_df[col] = test_df[col].str.replace("b'", "").str.replace("'", "")
+
+    test = pd.merge(test_df, test_data, left_index=True, right_index=True)
+
+    test_data = test
+    # print("test:\n")
+    # print(test)
+    return clf.predict(test_data)
+
+
+def boost2():
+    test_df = pd.read_csv(
+        "APP01/data/test2.csv",
+        low_memory=True,
+        usecols=['user', 'itemid', 'tagid', 'time', 'love'],
+        names=['user', 'itemid', 'tagid', 'time', 'love'],
+        nrows=None,
+        dtype={
+            'user': "category",
+            'itemid': "category",
+            'tagid': "category",
+            'time': "category",
+            'love': "category",
+        },
+    )
+
+    test_data = np.loadtxt(
+        "APP01/data/test2.csv",
+        dtype=np.float32,
+        delimiter=",",
+        usecols=list(range(0, 6)),
+        skiprows=1,
+    )
+
+    test_df.to_parquet('APP01/temp_data/test_df2.parquet')
+
+    np.save('APP01/temp_data/test_data2.npy', test_data)
+
+    test_df = pd.read_parquet("APP01/temp_data/test_df2.parquet")
+
+    test_data = np.load("APP01/temp_data/test_data2.npy")
 
     test_data = pd.DataFrame(data=test_data)
 
