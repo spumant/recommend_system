@@ -28,7 +28,7 @@ class Video(mongoengine.Document):
 
 
 class Collection(models.Model):
-    id = models.OneToOneField('Users', models.DO_NOTHING, db_column='id', primary_key=True)
+    user = models.IntegerField()
     collection = models.CharField(max_length=99)
     category = models.IntegerField()
 
@@ -38,14 +38,13 @@ class Collection(models.Model):
 
 
 class Love(models.Model):
-    id = models.OneToOneField('Users', models.DO_NOTHING, db_column='id', primary_key=True)
+    user = models.IntegerField()
     love = models.CharField(max_length=99)
     category = models.IntegerField()
 
     class Meta:
         managed = False
-        db_table = 'like'
-
+        db_table = 'love'
 
 class Log(models.Model):
     id = models.IntegerField(primary_key=True)

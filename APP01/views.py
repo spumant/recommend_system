@@ -55,6 +55,7 @@ class recommend1(GenericAPIView):
                     return Response(end_list[:10])
                 else:
                     continue
+
         except Exception as e:
             print(str(e))
             item_list = self.get_queryset()
@@ -63,6 +64,8 @@ class recommend1(GenericAPIView):
             items = sample(items, 10)
             print("随机结果")
             return Response(items)
+
+
 
 # 推荐视频
 class recommend2(APIView):

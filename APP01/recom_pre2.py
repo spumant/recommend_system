@@ -11,7 +11,7 @@ def recom2(pk):
     items = itemserializer.data
 
     # 查询此用户收藏的视频
-    collection_list = Collection.objects.filter(id=pk, category=2)
+    collection_list = Collection.objects.filter(user=pk, category=2)
     collectionserializer = Collection_serializer(instance=collection_list, many=True)
     collections = collectionserializer.data
     coll_id_list = []  # 将用户收藏的文章的序号放进队列
@@ -19,7 +19,7 @@ def recom2(pk):
         coll_id_list.append(collection['collection'])
 
     # 查询此用户喜欢的视频
-    like_list = Love.objects.filter(id=pk, category=2)
+    like_list = Love.objects.filter(user=pk, category=2)
     likeserializer = Love_serializer(instance=like_list, many=True)
     likes = likeserializer.data
     like_id_list = []  # 将用户喜欢的视频id放进列表
