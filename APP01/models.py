@@ -8,7 +8,7 @@ mongoengine.connect(DATABASES['mongodb']['NAME'])
 class Item(mongoengine.Document):
     id = mongoengine.StringField()
     title = mongoengine.StringField()
-    txt = mongoengine.StringField()
+    txt = mongoengine.ListField()
     img = mongoengine.StringField()
     tag = mongoengine.StringField()
     like = mongoengine.IntField()
@@ -19,12 +19,12 @@ class Item(mongoengine.Document):
 class Video(mongoengine.Document):
     id = mongoengine.StringField()
     title = mongoengine.StringField()
-    txt = mongoengine.StringField()
+    txt = mongoengine.ListField()
     img = mongoengine.StringField()
     tag = mongoengine.StringField()
     like = mongoengine.IntField()
     collection = mongoengine.IntField()
-    meta = {'collection': 'item', 'strict': False}
+    meta = {'collection': 'video', 'strict': False}
 
 
 class Collection(models.Model):

@@ -65,6 +65,14 @@ class recommend1(GenericAPIView):
             print("随机结果")
             return Response(items)
 
+        # 如果预测结果为空返回随机结果
+        item_list = self.get_queryset()
+        itemserializer = self.get_serializer(item_list, many=True)
+        items = itemserializer.data
+        items = sample(items, 10)
+        print("随机结果")
+        return Response(items)
+
 
 
 # 推荐视频
@@ -97,6 +105,14 @@ class recommend2(APIView):
             items = sample(items, 8)
             print("随机结果")
             return Response(items)
+
+        # 如果预测结果为空返回随机结果
+        item_list = self.get_queryset()
+        itemserializer = self.get_serializer(item_list, many=True)
+        items = itemserializer.data
+        items = sample(items, 10)
+        print("随机结果")
+        return Response(items)
 
 
 class recom_prepare(APIView):

@@ -34,12 +34,12 @@ def cat_prepare():
         skiprows=1,
     )
 
-    train_df.to_parquet('APP01/temp_data/train_df.parquet')
-    np.save('APP01/temp_data/train_data.npy', train_data)
-
-    train_df = pd.read_parquet("APP01/temp_data/train_df.parquet")
-
-    train_data = np.load("APP01/temp_data/train_data.npy")
+    # train_df.to_parquet('APP01/temp_data/train_df.parquet')
+    # np.save('APP01/temp_data/train_data.npy', train_data)
+    #
+    # train_df = pd.read_parquet("APP01/temp_data/train_df.parquet")
+    #
+    # train_data = np.load("APP01/temp_data/train_data.npy")
 
     train_data = pd.DataFrame(data=train_data)
 
@@ -49,16 +49,21 @@ def cat_prepare():
     del train_df['col'][0]
 
     train_df['col'] = train_df['col'].astype('str').astype('int')
-
+    # train_df = train_df.drop(0)
+    train_df = train_df.iloc[1:]
+    train_df.index = range(len(train_df))
     print(train_df)
 
     train = pd.merge(train_df, train_data, left_index=True, right_index=True)
 
     print("train:\n")
     print(train)
-
+    train = train.drop([5], axis=1)
     X_train = train[train['col'].notnull()].drop(['col'], axis=1)
     Y_train = train[train['col'].notnull()]['col']
+
+    print("X_train\n", X_train)
+    print("Y_train\n", Y_train)
 
     cols = ['user', 'itemid', 'tagid', 'time', 'love']
     model = CatBoostClassifier(
@@ -123,26 +128,32 @@ def boost1():
         usecols=list(range(0, 6)),
         skiprows=1,
     )
-
-    test_df.to_parquet('APP01/temp_data/test_df.parquet')
-
-    np.save('APP01/temp_data/test_data.npy', test_data)
-
-    test_df = pd.read_parquet("APP01/temp_data/test_df.parquet")
-
-    test_data = np.load("APP01/temp_data/test_data.npy")
-
+    #
+    # test_df.to_parquet('APP01/temp_data/test_df.parquet')
+    #
+    # np.save('APP01/temp_data/test_data.npy', test_data)
+    #
+    # test_df = pd.read_parquet("APP01/temp_data/test_df.parquet")
+    #
+    # test_data = np.load("APP01/temp_data/test_data.npy")
+    #
     test_data = pd.DataFrame(data=test_data)
 
     for col in ['user', 'itemid', 'tagid', 'time', 'love']:
         test_df[col] = test_df[col].str.replace("b'", "").str.replace("'", "")
+    test_df = test_df.drop(0)
+    test_df.index = range(len(test_df))
 
     test = pd.merge(test_df, test_data, left_index=True, right_index=True)
-
+    test = test.drop([5], axis=1)
     test_data = test
-    # print("test:\n")
-    # print(test)
-    return clf.predict(test_data)
+    print("test_data\n", test_data)
+
+    test = clf.predict(test_data)
+    print("test:\n")
+    print(test)
+
+    return test
 
 
 def boost2():
@@ -169,22 +180,26 @@ def boost2():
         skiprows=1,
     )
 
-    test_df.to_parquet('APP01/temp_data/test_df2.parquet')
-
-    np.save('APP01/temp_data/test_data2.npy', test_data)
-
-    test_df = pd.read_parquet("APP01/temp_data/test_df2.parquet")
-
-    test_data = np.load("APP01/temp_data/test_data2.npy")
-
+    # test_df.to_parquet('APP01/temp_data/test_df2.parquet')
+    #
+    # np.save('APP01/temp_data/test_data2.npy', test_data)
+    #
+    # test_df = pd.read_parquet("APP01/temp_data/test_df2.parquet")
+    #
+    # test_data = np.load("APP01/temp_data/test_data2.npy")
+    #
     test_data = pd.DataFrame(data=test_data)
 
     for col in ['user', 'itemid', 'tagid', 'time', 'love']:
         test_df[col] = test_df[col].str.replace("b'", "").str.replace("'", "")
 
-    test = pd.merge(test_df, test_data, left_index=True, right_index=True)
+    test_df = test_df.drop(0)
+    test_df.index = range(len(test_df))
 
-    test_data = test
-    # print("test:\n")
-    # print(test)
-    return clf.predict(test_data)
+    test = pd.merge(test_df, test_data, left_index=True, right_index=True)
+    test = test.drop([5], axis=1)
+    # test_data = test
+    print("test:\n")
+    print(test)
+
+    return clf.predict(test)

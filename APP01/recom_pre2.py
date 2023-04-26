@@ -25,12 +25,12 @@ def recom2(pk):
     like_id_list = []  # 将用户喜欢的视频id放进列表
     for like in likes:
         like_id_list.append(like['love'])
-    # 从items中随机抽取100个
-    items = sample(items, 100)
+    # 从items中随机抽取80个
+    items = sample(items, 80)
 
     # 从所有文章中删除已被本用户收藏的视频
     for item in items:
-        del item['auto_id_0']
+        del item["auto_id_0"]
         if item['id'] in coll_id_list:
             items.remove(item)
 
