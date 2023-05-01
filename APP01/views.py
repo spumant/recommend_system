@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from APP01.recom_pre import recom1
 from APP01.recom_pre2 import recom2
-
+import random
 from random import sample
 
 # 定时任务
@@ -32,9 +32,7 @@ except Exception as e:
 
 
 # 推荐文章
-class recommend1(GenericAPIView):
-    queryset = Item.objects.all()
-    serializer_class = Item_serializer
+class recommend1(APIView):
 
     def get(self, request, pk):
         # 最终的推荐列表
@@ -58,21 +56,20 @@ class recommend1(GenericAPIView):
 
         except Exception as e:
             print(str(e))
-            item_list = self.get_queryset()
-            itemserializer = self.get_serializer(item_list, many=True)
+            quires = random.sample(range(1, 40000), 10)
+            item_list = Item.objects.filter(id__in=quires)
+            itemserializer = Item_serializer(item_list, many=True)
             items = itemserializer.data
-            items = sample(items, 10)
             print("随机结果")
             return Response(items)
 
         # 如果预测结果为空返回随机结果
-        item_list = self.get_queryset()
-        itemserializer = self.get_serializer(item_list, many=True)
+        quires = random.sample(range(1, 40000), 10)
+        item_list = Item.objects.filter(id__in=quires)
+        itemserializer = Item_serializer(item_list, many=True)
         items = itemserializer.data
-        items = sample(items, 10)
         print("随机结果")
         return Response(items)
-
 
 
 # 推荐视频

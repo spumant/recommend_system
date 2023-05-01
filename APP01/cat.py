@@ -52,18 +52,18 @@ def cat_prepare():
     # train_df = train_df.drop(0)
     train_df = train_df.iloc[1:]
     train_df.index = range(len(train_df))
-    print(train_df)
+    # print(train_df)
 
     train = pd.merge(train_df, train_data, left_index=True, right_index=True)
 
-    print("train:\n")
-    print(train)
+    # print("train:\n")
+    # print(train)
     train = train.drop([5], axis=1)
     X_train = train[train['col'].notnull()].drop(['col'], axis=1)
     Y_train = train[train['col'].notnull()]['col']
 
-    print("X_train\n", X_train)
-    print("Y_train\n", Y_train)
+    # print("X_train\n", X_train)
+    # print("Y_train\n", Y_train)
 
     cols = ['user', 'itemid', 'tagid', 'time', 'love']
     model = CatBoostClassifier(
@@ -85,9 +85,9 @@ def cat_prepare():
     sk = StratifiedKFold(n_splits=n_folds, shuffle=True, random_state=2022)
 
     for fold_, (train, test) in enumerate(sk.split(X_train, Y_train)):
-        print("fold n°{}".format(fold_))
-        print('trn_idx:', train)
-        print('val_idx:', test)
+        # print("fold n°{}".format(fold_))
+        # print('trn_idx:', train)
+        # print('val_idx:', test)
         x_train = X_train.iloc[train]
         y_train = Y_train.iloc[train]
         x_test = X_train.iloc[test]
@@ -147,11 +147,11 @@ def boost1():
     test = pd.merge(test_df, test_data, left_index=True, right_index=True)
     test = test.drop([5], axis=1)
     test_data = test
-    print("test_data\n", test_data)
+    # print("test_data\n", test_data)
 
     test = clf.predict(test_data)
-    print("test:\n")
-    print(test)
+    # print("test:\n")
+    # print(test)
 
     return test
 
@@ -199,7 +199,7 @@ def boost2():
     test = pd.merge(test_df, test_data, left_index=True, right_index=True)
     test = test.drop([5], axis=1)
     # test_data = test
-    print("test:\n")
-    print(test)
+    # print("test:\n")
+    # print(test)
 
     return clf.predict(test)

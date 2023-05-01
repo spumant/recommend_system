@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
 from pathlib import Path
-
+import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 import rest_framework.renderers
 import rest_framework.authentication
@@ -83,31 +83,35 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'userdata',  # 要连接mysql数据库名称
-        'HOST': '127.0.0.1',  # 连接地址--本地连接
+        'HOST': '43.138.33.205',  # 连接地址--本地连接
         'PORT': '3306',  # 端口号3306
         'USER': 'root',  # 用什么用户连接
-        'PASSWORD': 'monarch99'  # 数据库密码
+        'PASSWORD': '123456'  # 数据库密码
     },
     'mongodb': {
-        'NAME': 'article'
+        'NAME': 'livegoods',
+        'HOST': '43.138.33.205',
+        'PORT': '27017',
+        'USER': 'root',
+        'PASSWORD': 'root'
     }
 }
 
 # redis
-CACHES = {
-    "default": {
-        "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://127.0.0.1:6379/0",
-        "OPTIONS": {
-            "CLIENT_CLASS": "django_redis.client.DefaultClient",
-            "CONNECTION_POOL_KWARGS": {
-                "max_connections": 1000,
-                "encoding": 'utf-8'
-            },
-            "PASSWORD": "monarch99"  # 如果设置了登录密码，那么这里写密码
-        }
-    }
-}
+# CACHES = {
+#     "default": {
+#         "BACKEND": "django_redis.cache.RedisCache",
+#         "LOCATION": "redis://127.0.0.1:6379/0",
+#         "OPTIONS": {
+#             "CLIENT_CLASS": "django_redis.client.DefaultClient",
+#             "CONNECTION_POOL_KWARGS": {
+#                 "max_connections": 1000,
+#                 "encoding": 'utf-8'
+#             },
+#             "PASSWORD": "monarch99"  # 如果设置了登录密码，那么这里写密码
+#         }
+#     }
+# }
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
 SESSION_CACHE_ALIAS = 'default'
@@ -117,7 +121,7 @@ REST_FRAMEWORK = {
         'rest_framework.renderers.JSONRenderer',
         'rest_framework.renderers.BrowsableAPIRenderer',
     ),
-    'DEFAULT_AUTHENTICATION_CLASSES': (
+    'DEFAULT_AUTENTICATION_CLASSES': (
         'rest_framework.authentication.BaseAuthentication',
         'rest_framework.authentication.SessionAuthentication',
     ),
@@ -144,8 +148,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-# Internationalization
-# https://docs.djangoproject.com/en/4.1/topics/i18n/
+# Internationalization# https://docs.djangoproject.com/en/4.1/topics/i18n/
 
 LANGUAGE_CODE = 'zh-hans'
 
@@ -158,8 +161,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
-STATIC_URL = "static/"
-
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 

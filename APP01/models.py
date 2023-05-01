@@ -2,7 +2,8 @@ from django.db import models
 import mongoengine
 from recommend_system.settings import DATABASES
 
-mongoengine.connect(DATABASES['mongodb']['NAME'])
+mongoengine.connect(DATABASES['mongodb']['NAME'], username='root', password='root',
+                    host='mongodb://root:root@43.138.33.205:27017/')
 
 
 class Item(mongoengine.Document):
@@ -24,7 +25,7 @@ class Video(mongoengine.Document):
     tag = mongoengine.StringField()
     like = mongoengine.IntField()
     collection = mongoengine.IntField()
-    meta = {'collection': 'video', 'strict': False}
+    meta = {'collection': 'shipin', 'strict': False}
 
 
 class Collection(models.Model):
@@ -45,6 +46,7 @@ class Love(models.Model):
     class Meta:
         managed = False
         db_table = 'love'
+
 
 class Log(models.Model):
     id = models.IntegerField(primary_key=True)

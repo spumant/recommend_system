@@ -1,3 +1,5 @@
+import random
+
 from APP01.models import Item, Collection, Love, Tag
 from APP01.serializers import Item_serializer, Collection_serializer, Love_serializer, Tag_serializer
 import csv
@@ -5,8 +7,9 @@ from random import sample
 
 
 def recom1(pk):
+    quires = random.sample(range(1, 40000), 200)
     # 先查所有文章
-    item_list = Item.objects.all()
+    item_list = Item.objects.filter(id__in=quires)
     itemserializer = Item_serializer(instance=item_list, many=True)
     items = itemserializer.data
 
@@ -44,8 +47,11 @@ def recom1(pk):
         tag_one = Tag.objects.filter(tag=item['tag'])
         tag_serializer = Tag_serializer(instance=tag_one, many=True)
         tag_data = tag_serializer.data
-        tagid = tag_data[0]['id']  # 查询为tagid
-        log['tagid'] = int(tagid)
+        try:
+            tagid = tag_data[0]['id']  # 查询为tagid
+            log['tagid'] = int(tagid)
+        except Exception as e:
+            log['tagid'] = 1
 
         log['time'] = 0
         if item['id'] in like_id_list:
