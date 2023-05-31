@@ -2,8 +2,11 @@ from django.db import models
 import mongoengine
 from recommend_system.settings import DATABASES
 
-mongoengine.connect(DATABASES['mongodb']['NAME'], username='root', password='root',
-                    host='mongodb://root:root@43.138.33.205:27017/')
+mongoengine.connect(DATABASES['mongodb']['NAME'], username='root', password='adc21nii754bew23facn',
+                    authentication_source='admin',
+                    # host='mongodb://root:root@43.138.33.205:27017/'
+                    host='43.138.33.205', port=27017
+                    )
 
 
 class Item(mongoengine.Document):

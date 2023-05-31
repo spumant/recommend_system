@@ -16,6 +16,7 @@ import os
 import rest_framework.renderers
 import rest_framework.authentication
 import rest_framework.permissions
+import corsheaders
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -43,13 +44,15 @@ INSTALLED_APPS = [
     "APP01.apps.App01Config",
     "rest_framework_mongoengine",
     "django_apscheduler",
+    "corsheaders",
 ]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
-    # "django.middleware.csrf.CsrfViewMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
@@ -86,14 +89,14 @@ DATABASES = {
         'HOST': '43.138.33.205',  # 连接地址--本地连接
         'PORT': '3306',  # 端口号3306
         'USER': 'root',  # 用什么用户连接
-        'PASSWORD': '123456'  # 数据库密码
+        'PASSWORD': '114514euf92nfhh22'  # 数据库密码
     },
     'mongodb': {
         'NAME': 'livegoods',
         'HOST': '43.138.33.205',
         'PORT': '27017',
         'USER': 'root',
-        'PASSWORD': 'root'
+        'PASSWORD': 'adc21nii754bew23facn'
     }
 }
 
@@ -167,3 +170,29 @@ STATIC_ROOT = os.path.join(BASE_DIR, "static")
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+CORS_ALLOW_CREDENTIALS = True
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ORIGIN_WHITELIST = ()
+# 对应的发送的请求的跨域
+CORS_ALLOW_METHODS = (
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
+    'VIEW',
+)
+
+CORS_ALLOW_HEADERS = (
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+)
